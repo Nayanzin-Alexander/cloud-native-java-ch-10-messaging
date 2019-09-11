@@ -1,6 +1,6 @@
 package com.nayanzin.integration.processfiles;
 
-import org.springframework.batch.core.JobExecution;
+import com.nayanzin.integration.service.ProcessResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,28 +22,26 @@ public class FinishedFileFlowsConfiguration {
     @Bean
     IntegrationFlow finishedJobsFlow(
             ChannelsConfiguration channels,
-            @Value("${process-files.success.output-directory:$HOME/Desktop/process-files/ok}") File successDir) {
-
+            @Value("${process-files.success.output-directory:${HOME}/Desktop/process-files/ok}") File successDir) {
         return IntegrationFlows
                 .from(channels.completed())
-                .handle(JobExecution.class, getMoveFileHandler(successDir))
+                .handle(ProcessResult.class, moveFileHandler(successDir))
                 .get();
     }
 
     @Bean
     IntegrationFlow failedJobsFlow(
             ChannelsConfiguration channels,
-            @Value("${process-files.failed.output-directory:$HOME/Desktop/process-files/failed}") File failedDir) {
+            @Value("${process-files.failed.output-directory:${HOME}/Desktop/process-files/failed}") File failedDir) {
 
         return IntegrationFlows
                 .from(channels.invalid())
-                .handle(JobExecution.class, getMoveFileHandler(failedDir))
+                .handle(ProcessResult.class, moveFileHandler(failedDir))
                 .get();
     }
 
-
-    private GenericHandler<JobExecution> getMoveFileHandler(@Value("${process-files.success.output-directory:$HOME/Desktop/process-files/ok}") File finished) {
-        return (jobExecution, messageHeaders) -> {
+    private GenericHandler<ProcessResult> moveFileHandler(@Value("${process-files.success.output-directory:${HOME}/Desktop/process-files/ok}") File finished) {
+        return (processResult, messageHeaders) -> {
             try {
                 File file = extractFileFrom(messageHeaders);
                 moveFileToDirectory(file, finished, true);
