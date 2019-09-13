@@ -1,16 +1,17 @@
 package com.naynzin.stream.producer;
 
+
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
 public interface ProducerChannels {
 
-    String DIRECT = "directGreetings";
-    String BROADCAST = "broadcastGreetings";
+    String BROADCAST_GREETINGS = "broadcastGreetings";
+    String DIRECT_GREETINGS = "directGreetings";
 
-    @Output(DIRECT)
-    MessageChannel directGreetings();
+    @Output(BROADCAST_GREETINGS)
+    MessageChannel broadcastChannel();
 
-    @Output(BROADCAST)
-    MessageChannel broadcastGreetings();
+    @Output(DIRECT_GREETINGS)
+    MessageChannel directChannel();
 }
