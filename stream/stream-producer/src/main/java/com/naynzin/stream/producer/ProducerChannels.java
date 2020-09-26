@@ -12,7 +12,7 @@ public interface ProducerChannels {
     @Output(BROADCAST_GREETINGS)
     MessageChannel broadcastChannel();
 
-    
+
     @Output(DIRECT_GREETINGS)
     MessageChannel directChannel();
 }
